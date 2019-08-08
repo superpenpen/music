@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.mapper.MusicScoreMapper">
+
+    <resultMap id="musicScoreForSel" type="com.music.entity.MusicScoreForSel">
+        <id column="id" property="id" />
+        <result column="music_name" property="musicName" />
+        <result column="music_scope" property="musicScope" />
+        <result column="music_type" property="musicType" />
+        <result column="hands" property="hands" />
+        <result column="music_character" property="musicCharacter" />
+        <result column="music_time" property="musicTime" />
+        <result column="author_known_degree" property="authorKnownDegree" />
+        <result column="author_country" property="authorCountryId" />
+        <result column="author_name" property="authorNameId" />
+        <result column="file_path" property="filePath" />
+        <result column="create_time" property="createTime" />
+        <!-- 配置映射的关联的用户信息 -->
+        <!-- association：用于映射关联查询单个对象的信息
+            property：要将关联查询的用户信息映射到Orders中的对应属性
+         -->
+        <association property="authorName" javaType="com.music.entity.AuthorName">
+            <!--
+                id：关联查询用户的唯一标识
+                column：指定唯一标识用户信息的列
+                javaType：映射到user的对应属性
+             -->
+            <id column="id" property="id"/>
+            <result column="author_name" property="authorName"/>
+            <result column="author_name_id" property="authorNameId"/>
+        </association>
+        <association property="authorCountry" javaType="com.music.entity.AuthorCountry">
+            <!--
+                id：关联查询用户的唯一标识
+                column：指定唯一标识用户信息的列
+                javaType：映射到user的对应属性
+             -->
+            <id column="id" property="id"/>
+            <result column="author_country" property="authorCountry"/>
+            <result column="author_country_id" property="authorCountryId"/>
+        </association>
+    </resultMap>
+
+
+    <select id="selectMusics" resultMap="musicScoreForSel">
+        select  * from music_score ms, author_name an, author_country ac
+        where ms.author_name = an.author_name_id and ms.author_country = ac.author_country_id
+        <if test="queryParams.musicName != null and queryParams.musicName != ''">
+            AND  ms.music_name  like concat('%',#{queryParams.musicName},'%')
+        </if>
+        <if test="queryParams.musicScope != null and queryParams.musicScope != '' or queryParams.musicScope == 0 ">
+            AND  ms.music_scope = #{queryParams.music_scope}
+        </if>
+        <if test="queryParams.musicType != null and queryParams.musicType != '' or queryParams.musicType == 0 ">
+            AND  ms.music_type = #{queryParams.musicType}
+        </if>
+        <if test="queryParams.hands != null and queryParams.hands != '' or queryParams.hands == 0 ">
+            AND  ms.hands = #{queryParams.hands}
+        </if>
+        <if test="queryParams.musicName != null and queryParams.musicName != ''">
+            AND  ms.music_name  like concat('%',#{queryParams.musicName},'%')
+        </if>
+        ORDER BY d.create_time DESC
+    </select>
+
+</mapper>

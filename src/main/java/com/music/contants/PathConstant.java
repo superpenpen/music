@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Configuration;
 public class PathConstant {
 
 
-    @Value("${music.baseFilepath}")
+//    @Value("${music.baseFilepath}")
     String baseFilepath ;
 
-    @Value("${music.musicScore}")
+//    @Value("${music.musicScore}")
     String faceFilepath ;
 
     public String getBaseFilepath() {

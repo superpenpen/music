@@ -60,8 +60,5 @@ mybatis-plus:
            map-underscore-to-camel-case: true
            cache-enabled: false
 
-music:
-  # nfs或者共享目录地址
-  baseFilepath : /home/music/data
-  # 人脸上传的图片地址 (最终的地址 baseFilepath + filepath)
-  musicScore : /music_score
+upload:
+  path: C:\Users\apple\Desktop
