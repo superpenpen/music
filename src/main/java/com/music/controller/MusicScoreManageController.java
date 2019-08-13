@@ -6,6 +6,7 @@ import com.music.api.APIResponse;
 import com.music.api.APIServiceCode;
 import com.music.entity.MusicScore;
 import com.music.expection.BusinessException;
+import com.music.mapper.MusicScoreMapper;
 import com.music.service.IMusicScoreService;
 import com.music.util.StringUtils;
 import com.music.util.UploadUtils;
@@ -36,6 +37,9 @@ public class MusicScoreManageController {
     @Autowired
     IMusicScoreService musicScoreService;
 
+    @Autowired
+    MusicScoreMapper musicScoreMapper;
+
 
 
     @Value("${upload.path}")
@@ -48,7 +52,7 @@ public class MusicScoreManageController {
      * @return
      */
     @PostMapping("/musics")
-    APIResponse selectMusics(JSONObject json){
+    APIResponse selectMusics(@RequestBody JSONObject json){
         int page =  json.getIntValue("page");
         int size = json.getIntValue("size");
         if(StringUtils.isEmptyBatch(page,size)){
@@ -88,6 +92,26 @@ public class MusicScoreManageController {
             throw new BusinessException(APIServiceCode.SYSTEM_INNER_ERROR.getCode(),
                     APIServiceCode.SYSTEM_INNER_ERROR.getMessage());
         }
+    }
+
+    /**
+     * 查询作家
+     * @return
+     */
+    @GetMapping("/names")
+    APIResponse getNames(){
+
+        return APIResponse.success(musicScoreMapper.getNames());
+    }
+
+    /**
+     * 查询国家
+     * @return
+     */
+    @GetMapping("/countrys")
+    APIResponse getCountrys(){
+
+        return APIResponse.success(musicScoreMapper.getCountrys());
     }
 
 }

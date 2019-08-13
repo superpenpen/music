@@ -43,12 +43,12 @@ public class MusicScore {
     /**
      * 作者国家 关联表
      */
-    private Integer authorCountry;
+    private Integer authorCountryId;
 
     /**
      * 作者名称 关联表
      */
-    private Integer authorName;
+    private Integer authorNameId;
 
     /**
      * 乐谱保存路径
@@ -121,20 +121,21 @@ public class MusicScore {
         this.authorKnownDegree = authorKnownDegree;
     }
 
-    public Integer getAuthorCountry() {
-        return authorCountry;
+
+    public Integer getAuthorCountryId() {
+        return authorCountryId;
     }
 
-    public void setAuthorCountry(Integer authorCountry) {
-        this.authorCountry = authorCountry;
+    public void setAuthorCountryId(Integer authorCountryId) {
+        this.authorCountryId = authorCountryId;
     }
 
-    public Integer getAuthorName() {
-        return authorName;
+    public Integer getAuthorNameId() {
+        return authorNameId;
     }
 
-    public void setAuthorName(Integer authorName) {
-        this.authorName = authorName;
+    public void setAuthorNameId(Integer authorNameId) {
+        this.authorNameId = authorNameId;
     }
 
     public String getFilePath() {

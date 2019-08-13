@@ -4,7 +4,7 @@ public class AuthorName {
 
     private int id;
     private String authorName;
-    private int authorNameId;
+    private Integer authorNameId;
 
 
     public int getId() {
@@ -23,11 +23,11 @@ public class AuthorName {
         this.authorName = authorName;
     }
 
-    public int getAuthorNameId() {
+    public Integer getAuthorNameId() {
         return authorNameId;
     }
 
-    public void setAuthorNameId(int authorNameId) {
+    public void setAuthorNameId(Integer authorNameId) {
         this.authorNameId = authorNameId;
     }
 }

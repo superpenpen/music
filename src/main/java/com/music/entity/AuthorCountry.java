@@ -4,7 +4,7 @@ public class AuthorCountry {
 
     private int id;
     private String authorCountry;
-    private int authorCountryId;
+    private Integer authorCountryId;
 
 
     public int getId() {
@@ -23,11 +23,11 @@ public class AuthorCountry {
         this.authorCountry = authorCountry;
     }
 
-    public int getAuthorCountryId() {
+    public Integer getAuthorCountryId() {
         return authorCountryId;
     }
 
-    public void setAuthorCountryId(int authorCountryId) {
+    public void setAuthorCountryId(Integer authorCountryId) {
         this.authorCountryId = authorCountryId;
     }
 }

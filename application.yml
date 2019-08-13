@@ -61,4 +61,4 @@ mybatis-plus:
            cache-enabled: false
 
 upload:
-  path: C:\Users\apple\Desktop
+  path: C:\Users\apple\Desktop\

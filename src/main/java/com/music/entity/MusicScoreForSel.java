@@ -55,6 +55,8 @@ public class MusicScoreForSel {
      */
     private String filePath;
 
+    private String createTime;
+
     public Integer getId() {
         return id;
     }
@@ -142,4 +144,13 @@ public class MusicScoreForSel {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
 }
