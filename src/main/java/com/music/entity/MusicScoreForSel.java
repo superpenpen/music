@@ -26,9 +26,9 @@ public class MusicScoreForSel {
     private Integer hands;
 
     /**
-     *  曲子特性 1快速跑动2八度3双音4附点5三连音6和弦7断奏8三六度9其他
+     *  曲子特性 a快速跑动b八度c双音d附点e三连音f和弦g断奏h三六度i其他
      */
-    private Integer musiCharacter;
+    private String musicCharacter;
 
     /**
      * 乐谱时期 1巴洛克 2古典 3浪漫 4印象 5现代
@@ -97,12 +97,12 @@ public class MusicScoreForSel {
         this.hands = hands;
     }
 
-    public Integer getMusiCharacter() {
-        return musiCharacter;
+    public String getMusicCharacter() {
+        return musicCharacter;
     }
 
-    public void setMusiCharacter(Integer musiCharacter) {
-        this.musiCharacter = musiCharacter;
+    public void setMusicCharacter(String musicCharacter) {
+        this.musicCharacter = musicCharacter;
     }
 
     public Integer getMusicTime() {

@@ -1,6 +1,7 @@
 package com.music.util;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.music.api.APIServiceCode;
 import com.music.expection.BusinessException;
 import org.apache.log4j.Logger;
@@ -31,21 +32,24 @@ public class UploadUtils {
      * @auther: xiep
      * @date: 2019/1/30 11:48
      */
-    public String updateToBaseFile(String filePath,MultipartFile file){
+    public JSONObject updateToBaseFile(String filePath, MultipartFile file){
         String fileName =  file.getOriginalFilename();
         String path  = filePath + fileName  ;
 
         File dest = new File(path);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("path", path)
+                .fluentPut("fileName", fileName);
         if( dest.exists() ) {
-            throw new BusinessException(APIServiceCode.UPLOAD_FILE_EXIST.getCode(),
-                    APIServiceCode.UPLOAD_FILE_EXIST.getMessage());
+            return jsonObject;
         }
         try {
             file.transferTo(dest);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return path;
+
+        return jsonObject;
     }
 
 

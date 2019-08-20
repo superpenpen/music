@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.music.api.APIResponse;
 import com.music.api.APIServiceCode;
 import com.music.entity.MusicScore;
+import com.music.entity.MusicScoreForSel;
 import com.music.expection.BusinessException;
 import com.music.mapper.MusicScoreMapper;
 import com.music.service.IMusicScoreService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author xiep
@@ -59,9 +61,9 @@ public class MusicScoreManageController {
             throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
                     APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
         }
-        Page<MusicScore> musicScorePage = new Page<MusicScore>(page,size);
+        Page<MusicScoreForSel> musicScorePage = new Page<MusicScoreForSel>(page,size);
         MusicScore queryParams = new MusicScore();
-        Page<MusicScore> musics = musicScoreService.selectMusics(musicScorePage,queryParams);
+        Page<MusicScoreForSel> musics = musicScoreService.selectMusics(musicScorePage,queryParams);
         if(musics.getSize()>0){
             return APIResponse.success(musics) ;
         }
@@ -76,16 +78,41 @@ public class MusicScoreManageController {
     @PostMapping("/add")
     APIResponse addMusic(@Valid MusicScore musicScore, @RequestParam("file") MultipartFile file) {
         String path = null;
+        String fileName = null;
         try {
             if ( null!= file  ) {
-                path = uploadUtils.updateToBaseFile(uploadPath,file);
+                JSONObject jsonObject = uploadUtils.updateToBaseFile(uploadPath,file);
+                path = jsonObject.getString("path");
+                fileName = jsonObject.getString("fileName");
             } else {
                 throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
                         APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
             }
+            String[] names = fileName.split(",");
+            musicScore.setMusicName(names[0]);
             musicScore.setFilePath(path);
             musicScore.setCreateTime(DateUtils.getCurrentTime());
             musicScoreService.insertMusicScore(musicScore);
+            return APIResponse.success(APIServiceCode.SUCCESS.getCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(APIServiceCode.SYSTEM_INNER_ERROR.getCode(),
+                    APIServiceCode.SYSTEM_INNER_ERROR.getMessage());
+        }
+    }
+
+    /**
+     * 删除
+     * @return
+     */
+    @GetMapping("/delete")
+    APIResponse deleteMusic(String id) {
+        if(StringUtils.isEmpty(id)){
+            throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
+                    APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        try {
+            musicScoreMapper.delById(Integer.valueOf(id));
             return APIResponse.success(APIServiceCode.SUCCESS.getCode());
         } catch (Exception e) {
             e.printStackTrace();

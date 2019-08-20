@@ -3,6 +3,7 @@ package com.music.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.music.entity.MusicScore;
+import com.music.entity.MusicScoreForSel;
 import com.music.mapper.MusicScoreMapper;
 import com.music.service.IMusicScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class MusicScoreServiceImpl extends ServiceImpl<MusicScoreMapper, MusicSc
     MusicScoreMapper musicScoreMapper;
 
     @Override
-    public Page<MusicScore> selectMusics(Page<MusicScore> page, MusicScore queryParams){
+    public Page<MusicScoreForSel> selectMusics(Page<MusicScoreForSel> page, MusicScore queryParams){
         return (Page)page.setRecords(musicScoreMapper.selectMusics(page,queryParams));
     }
 

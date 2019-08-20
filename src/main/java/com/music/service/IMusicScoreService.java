@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.music.api.APIResponse;
 import com.music.entity.MusicScore;
+import com.music.entity.MusicScoreForSel;
 import com.music.entity.Role;
 import com.music.entity.User;
 
@@ -22,7 +23,7 @@ public interface IMusicScoreService extends IService<MusicScore> {
 	 * @param queryParams
 	 * @return
 	 */
-	Page<MusicScore> selectMusics(Page<MusicScore> page, MusicScore queryParams);
+	Page<MusicScoreForSel> selectMusics(Page<MusicScoreForSel> page, MusicScore queryParams);
 
 
 	/**
