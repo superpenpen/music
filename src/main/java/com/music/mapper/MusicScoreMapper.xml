@@ -10,7 +10,7 @@
             AND  ms.music_name  like concat('%',#{queryParams.musicName},'%')
         </if>
         <if test="queryParams.musicScope != null and queryParams.musicScope != '' or queryParams.musicScope == 0 ">
-            AND  ms.music_scope = #{queryParams.music_scope}
+            AND  ms.music_scope = #{queryParams.musicScope}
         </if>
         <if test="queryParams.musicType != null and queryParams.musicType != '' or queryParams.musicType == 0 ">
             AND  ms.music_type = #{queryParams.musicType}
@@ -18,8 +18,22 @@
         <if test="queryParams.hands != null and queryParams.hands != '' or queryParams.hands == 0 ">
             AND  ms.hands = #{queryParams.hands}
         </if>
-        <if test="queryParams.musicName != null and queryParams.musicName != ''">
-            AND  ms.music_name  like concat('%',#{queryParams.musicName},'%')
+        <if test="queryParams.musicTime != null and queryParams.musicTime != '' or queryParams.musicTime == 0 ">
+            AND  ms.music_time = #{queryParams.musicTime}
+        </if>
+        <if test="queryParams.authorKnownDegree != null and queryParams.authorKnownDegree != '' or queryParams.authorKnownDegree == 0 ">
+            AND  ms.author_known_degree = #{queryParams.authorKnownDegree}
+        </if>
+        <if test="queryParams.authorCountryId != null and queryParams.authorCountryId != '' or queryParams.authorCountryId == 0 ">
+            AND  ms.author_country_id = #{queryParams.authorCountryId}
+        </if>
+        <if test="queryParams.authorNameId != null and queryParams.authorNameId != '' or queryParams.authorNameId == 0 ">
+            AND  ms.author_name_id = #{queryParams.authorNameId}
+        </if>
+        <if test="queryParams.musicCharacter != null and queryParams.musicCharacter.size > 0">
+            <foreach collection="queryParams.musicCharacter" index="index" item="item">
+                AND ms.music_character LIKE CONCAT('%',#{item},'%')
+            </foreach>
         </if>
         ORDER BY ms.create_time DESC
     </select>

@@ -1,6 +1,8 @@
 package com.music.entity;
 
-public class MusicScore {
+import java.util.List;
+
+public class MusicScoreQuery {
 
     private Integer id;
 
@@ -28,7 +30,7 @@ public class MusicScore {
     /**
      *  曲子特性 1快速跑动2八度3双音4附点5三连音6和弦7断奏8三六度9其他
      */
-    private String musicCharacter;
+    private List<String> musicCharacter;
 
     /**
      * 乐谱时期 1巴洛克 2古典 3浪漫 4印象 5现代
@@ -56,8 +58,6 @@ public class MusicScore {
     private String filePath;
 
     private String createTime;
-
-    private String uuid;
 
     public Integer getId() {
         return id;
@@ -100,11 +100,11 @@ public class MusicScore {
     }
 
 
-    public String getMusicCharacter() {
+    public List<String> getMusicCharacter() {
         return musicCharacter;
     }
 
-    public void setMusicCharacter(String musicCharacter) {
+    public void setMusicCharacter(List<String> musicCharacter) {
         this.musicCharacter = musicCharacter;
     }
 
@@ -155,13 +155,5 @@ public class MusicScore {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 }

@@ -1,10 +1,7 @@
 package com.music.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.music.entity.AuthorCountry;
-import com.music.entity.AuthorName;
-import com.music.entity.MusicScore;
-import com.music.entity.MusicScoreForSel;
+import com.music.entity.*;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -23,7 +20,7 @@ import java.util.List;
 public interface MusicScoreMapper extends SuperMapper<MusicScore> {
 
 
-    List<MusicScoreForSel> selectMusics(Page<MusicScoreForSel> page, @Param("queryParams")MusicScore queryParams);
+    List<MusicScoreForSel> selectMusics(Page<MusicScoreForSel> page, @Param("queryParams")MusicScoreQuery queryParams);
 
     @Select(" select * from author_country")
     List<AuthorCountry> getCountrys();

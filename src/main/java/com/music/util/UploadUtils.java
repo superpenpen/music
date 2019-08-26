@@ -32,9 +32,9 @@ public class UploadUtils {
      * @auther: xiep
      * @date: 2019/1/30 11:48
      */
-    public JSONObject updateToBaseFile(String filePath, MultipartFile file){
+    public JSONObject updateToBaseFile(String filePath, MultipartFile file, String uuid){
         String fileName =  file.getOriginalFilename();
-        String path  = filePath + fileName  ;
+        String path  = filePath + uuid + ".pdf"  ;
 
         File dest = new File(path);
         JSONObject jsonObject = new JSONObject();

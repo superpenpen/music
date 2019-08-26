@@ -57,6 +57,8 @@ public class MusicScoreForSel {
 
     private String createTime;
 
+    private String uuid;
+
     public Integer getId() {
         return id;
     }
@@ -153,4 +155,11 @@ public class MusicScoreForSel {
         this.createTime = createTime;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 }
