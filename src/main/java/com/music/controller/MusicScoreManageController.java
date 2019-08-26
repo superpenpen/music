@@ -6,6 +6,7 @@ import com.music.api.APIResponse;
 import com.music.api.APIServiceCode;
 import com.music.entity.MusicScore;
 import com.music.entity.MusicScoreForSel;
+import com.music.entity.MusicScoreQuery;
 import com.music.expection.BusinessException;
 import com.music.mapper.MusicScoreMapper;
 import com.music.service.IMusicScoreService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,12 +60,56 @@ public class MusicScoreManageController {
     APIResponse selectMusics(@RequestBody JSONObject json){
         int page =  json.getIntValue("page");
         int size = json.getIntValue("size");
+        String musicName = json.getString("musicName");
+        String musicScope = json.getString("musicScope");
+        String musicType = json.getString("musicType");
+        String hands = json.getString("hands");
+        String musicCharacter = json.getString("musicCharacter");
+        String musicTime = json.getString("musicTime");
+        String authorKnownDegree = json.getString("authorKnownDegree");
+        String authorCountryId = json.getString("authorCountryId");
+        String authorNameId = json.getString("authorNameId");
         if(StringUtils.isEmptyBatch(page,size)){
             throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
                     APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
         }
         Page<MusicScoreForSel> musicScorePage = new Page<MusicScoreForSel>(page,size);
-        MusicScore queryParams = new MusicScore();
+        MusicScoreQuery queryParams = new MusicScoreQuery();
+        if (!StringUtils.isEmpty(musicName)){
+            queryParams.setMusicName(musicName);
+        }
+        if (!StringUtils.isEmpty(musicType)){
+            queryParams.setMusicType(Integer.valueOf(musicType));
+        }
+        if (!StringUtils.isEmpty(musicScope)){
+            queryParams.setMusicScope(Integer.valueOf(musicScope));
+        }
+        if (!StringUtils.isEmpty(hands)){
+            queryParams.setHands(Integer.valueOf(hands));
+        }
+        if (!StringUtils.isEmpty(musicCharacter)){
+            List<String> musicCharacterList = new ArrayList<>();
+            if (musicCharacter.length()>1){
+                String[] musicCharacters = musicCharacter.split(",");
+                musicCharacterList = Arrays.asList(musicCharacters);
+            }else{
+                musicCharacterList.add(musicCharacter);
+            }
+            queryParams.setMusicCharacter(musicCharacterList);
+        }
+        if (!StringUtils.isEmpty(musicTime)){
+            queryParams.setMusicTime(Integer.valueOf(musicTime));
+        }
+        if (!StringUtils.isEmpty(authorKnownDegree)){
+            queryParams.setAuthorKnownDegree(Integer.valueOf(authorKnownDegree));
+        }
+        if (!StringUtils.isEmpty(authorCountryId)){
+            queryParams.setAuthorCountryId(Integer.valueOf(authorCountryId));
+        }
+        if (!StringUtils.isEmpty(authorNameId)){
+            queryParams.setAuthorNameId(Integer.valueOf(authorNameId));
+        }
+
         Page<MusicScoreForSel> musics = musicScoreService.selectMusics(musicScorePage,queryParams);
         if(musics.getSize()>0){
             return APIResponse.success(musics) ;
@@ -79,9 +126,10 @@ public class MusicScoreManageController {
     APIResponse addMusic(@Valid MusicScore musicScore, @RequestParam("file") MultipartFile file) {
         String path = null;
         String fileName = null;
+        String uuid = StringUtils.getRandomCharAndNumr(20);
         try {
             if ( null!= file  ) {
-                JSONObject jsonObject = uploadUtils.updateToBaseFile(uploadPath,file);
+                JSONObject jsonObject = uploadUtils.updateToBaseFile(uploadPath,file, uuid);
                 path = jsonObject.getString("path");
                 fileName = jsonObject.getString("fileName");
             } else {
@@ -92,6 +140,7 @@ public class MusicScoreManageController {
             musicScore.setMusicName(names[0]);
             musicScore.setFilePath(path);
             musicScore.setCreateTime(DateUtils.getCurrentTime());
+            musicScore.setUuid(uuid);
             musicScoreService.insertMusicScore(musicScore);
             return APIResponse.success(APIServiceCode.SUCCESS.getCode());
         } catch (Exception e) {
