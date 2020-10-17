@@ -1,35 +1,83 @@
 package com.music.entity;
 
-public class User {
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-    private int id;
-    private String username;
+import java.io.Serializable;
+
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author Xiep
+ * @since 2020-08-31
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
+    /**
+     * 账号名称
+     */
+    private String userName;
+
+    /**
+     * 昵称
+     */
+    private String nickName;
+
+    /**
+     * 密码
+     */
     private String password;
-    private String descInfo;
-    private int roleId;
-    private String roleName;
-    private String email;
-    private String phone;
-    private String address;
-    private String createTime;
-    private String updateTime;
-    private int createUserId;
-    private int status;
 
-    public int getId() {
+    /**
+     * 加密盐
+     */
+    private String salt;
+
+    /**
+     * 角色ID
+     */
+    private Integer roleId;
+
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getPassword() {
@@ -40,102 +88,19 @@ public class User {
         this.password = password;
     }
 
-    public String getDescInfo() {
-        return descInfo;
+    public String getSalt() {
+        return salt;
     }
 
-    public void setDescInfo(String descInfo) {
-        this.descInfo = descInfo;
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
-    public int getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(int roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public int getCreateUserId() {
-        return createUserId;
-    }
-
-    public void setCreateUserId(int createUserId) {
-        this.createUserId = createUserId;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", descInfo='" + descInfo + '\'' +
-                ", roleId=" + roleId +
-                ", roleName='" + roleName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", createTime='" + createTime + '\'' +
-                ", updateTime='" + updateTime + '\'' +
-                ", createUserId=" + createUserId +
-                ", status=" + status +
-                '}';
     }
 }

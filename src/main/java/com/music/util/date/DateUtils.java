@@ -5,11 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * @author xiep
+ * @author zkk
  * @version V1.0
  * @Title: ${file_name}
  * @Package ${package_name}
@@ -45,15 +43,6 @@ public class DateUtils {
     public static String getTCurrentTime(){
         return getCurrentTime(DateFormatUtils.DATE_FORMAT_T);
     }
-
-    /**
-     * 获取当前时间，格式为：yyyMMddHHmmss
-     * @return String
-     */
-    public static String getCurrentTime2(){
-        return getCurrentTime(DateFormatUtils.TIME_NOFUll_FORMAT);
-    }
-
 
     /**
      * 获取当前时间，格式为：yyyy-MM-dd
@@ -337,7 +326,7 @@ public class DateUtils {
         Date date = null;
 
         try {
-            value = DateFormatUtils.formatDate(value, format);
+//            value = DateFormatUtils.formatDate(value, format);
             date = sdf.parse(value);
         } catch (Exception e) {
             e.printStackTrace();
@@ -631,21 +620,6 @@ public class DateUtils {
     }
 
     /**
-     * 时间戳转换成日期格式字符串
-     * @param seconds
-     * @param format
-     * @return
-     */
-    public static String TimeStamp2Date(String seconds, String format){
-        if (seconds == null || seconds.isEmpty() || seconds.equals("null")){
-            return "";
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        return sdf.format(new Date(Long.valueOf(seconds +"000")));
-
-    }
-
-    /**
      * 日期格式字符串转换成 long形式的时间戳  单位 : 秒
      * @param dateStr
      * @param format
@@ -764,19 +738,9 @@ public class DateUtils {
             c= (int)((time1 - time2) / 1000);
         }catch (Exception e) {
             return 600;
+            // TODO: handle exception
         }
         return c;
     }
 
-    /**
-     * yy-MM-dd HH:mm:ss 时间格式检验
-     * @param checkValue
-     * @return
-     */
-    public static  boolean checkDate(String checkValue){
-        String eL= "^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|([1-2][0-9]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$";
-        Pattern p = Pattern.compile(eL);
-        Matcher m = p.matcher(checkValue);
-        return m.matches();
-    }
 }

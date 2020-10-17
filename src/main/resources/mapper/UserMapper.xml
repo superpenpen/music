@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.music.mapper.UserMapper">
+
+    <select id="getUserByUserName" resultType="com.music.entity.User">
+        select * from user where user_name=#{userName}
+    </select>
+
+    <select id="selectUserPage"  resultType="com.cstor.cvideo.aicloud.entity.User" >
+        select  u.* from user u where 1=1
+        <if test="userName != null and userName != ''">
+            AND  u.user_name like concat('%',#{userName},'%')
+        </if>
+        <if test="nickName != null and nickName != ''">
+            AND  u.nick_name like concat('%',#{nickName},'%')
+        </if>
+        <if test="roleId != null and roleId != ''">
+            AND  u.role_id = #{roleId}
+        </if>
+        <if test="join != null and join != ''">
+            AND  ${join}
+        </if>
+        ORDER BY u.role_id
+    </select>
+
+    <update id="pwdReset" >
+        update user u set u.password=#{password} where u.id = #{id}
+    </update>
+
+    <update id="updateNickName" >
+        update user u set u.nick_name=#{nickName} where u.id = #{id}
+    </update>
+
+    <update id="updateRoleId" >
+        update user u set u.role_id=#{roleId} where u.id = #{id}
+    </update>
+
+
+
+</mapper>

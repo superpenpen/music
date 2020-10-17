@@ -17,6 +17,6 @@ public class ServletInitializer extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         // 注意这里要指向原先用main方法执行的Application启动类
         logger.info(" ------------------------------ ServletInitializer ------------------ ");
-        return builder.sources(HelloApplication.class);
+        return builder.sources(MusicApplication.class);
     }
 }

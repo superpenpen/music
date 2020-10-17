@@ -2,63 +2,101 @@ package com.music.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.music.api.APIResponse;
-import com.music.entity.Role;
 import com.music.entity.User;
+import com.music.util.HttpResult;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * User表数据服务层接口
+ * <p>
+ *  服务类
+ * </p>
+ *
+ * @author Xiep
+ * @since 2020-08-31
  */
 public interface IUserService extends IService<User> {
 
-	/**
-	 * 根据创建用户ID获取用户列表
-	 * @param page 第几页
-	 * @param pageSize 每页多少条记录
-	 * @param userId 用户ID
-	 * @return 用户列表
-	 */
-	List<User> getUsersById(String page, String pageSize, String userId);
+    /**
+     * 根据用户名查询用户
+     *
+     * @param userName 名称
+     * @return User
+     */
+    User getUserByUserName(String userName);
 
-	/**
-	 * 根据创建用户ID获取用户数
-	 * @param userId 创建用户ID
-	 * @return 用户数
-	 */
-	int countUsersById(String userId);
 
     /**
-     * 创建用户
+     * 根据条件查询用户
+     *
+     * @param userName
+     * @param nickName
+     * @param roleId
+     * @param page
+     * @param size
+     * @return
+     */
+    HttpResult getUsersPageQuery(HttpServletRequest reques,
+                                 String userName, String nickName, Integer roleId, Integer page, Integer size);
+
+
+    /**
+     * 用户新增
+     *
      * @param user
      * @return
      */
-    APIResponse insertUser(User user);
+    HttpResult userCreate(User user);
 
     /**
-     * 修改用户
-     * @param user
+     * 用户删除
+     *
+     * @param userId
      * @return
      */
-    APIResponse updateUser(User user);
+    HttpResult userDelete(Integer userId);
 
     /**
-     * 删除用户
+     * 用户密码重置
+     *
      * @param id
-     */
-    void deleteUser(int id);
-
-    /**
-     * 更新用户状态
-     * @param userId, status
-     */
-    void updateUserStatus(int userId, int status);
-
-    /**
-     * 查询数据库，获取角色列表(除超级管理员角色)
      * @return
      */
-    List<Role> getAllRoles();
+    HttpResult userPwdReset(Integer id);
+
+
+    /**
+     * 用户密码修改
+     *
+     * @param id
+     * @param password
+     * @param passwordNew
+     * @return
+     */
+    HttpResult userPwdEdit(Integer id, String password, String passwordNew);
+
+
+    /**
+     * 用户昵称修改
+     *
+     * @param id
+     * @param nickName
+     * @return
+     */
+    HttpResult userNickNameEdit(Integer id, String nickName);
+
+
+    /**
+     * 用户角色修改
+     *
+     * @param id
+     * @param roleId
+     * @return
+     */
+    HttpResult userRoleEdit(Integer id, Integer roleId);
+
+
+
+
 
 }

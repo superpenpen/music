@@ -2,23 +2,23 @@ package com.music.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.music.api.APIResponse;
-import com.music.api.APIServiceCode;
+
+import com.music.constant.PathConstant;
 import com.music.entity.MusicScore;
 import com.music.entity.MusicScoreForSel;
 import com.music.entity.MusicScoreQuery;
-import com.music.expection.BusinessException;
 import com.music.mapper.MusicScoreMapper;
 import com.music.service.IMusicScoreService;
+import com.music.util.HttpResult;
+import com.music.util.HttpStatus;
 import com.music.util.StringUtils;
 import com.music.util.UploadUtils;
 import com.music.util.date.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,28 +36,28 @@ import java.util.List;
 @RequestMapping("/music_socre")
 public class MusicScoreManageController {
 
-    @Autowired
+    @Resource
     UploadUtils uploadUtils;
 
-    @Autowired
+    @Resource
+    PathConstant pathConstant;
+
+    @Resource
     IMusicScoreService musicScoreService;
 
-    @Autowired
+    @Resource
     MusicScoreMapper musicScoreMapper;
 
 
 
-    @Value("${upload.path}")
-    String uploadPath;
-
-
     /**
      * 分页查询乐谱相关信息
+     *
      * @param json
      * @return
      */
     @PostMapping("/musics")
-    APIResponse selectMusics(@RequestBody JSONObject json){
+    HttpResult selectMusics(@RequestBody JSONObject json){
         int page =  json.getIntValue("page");
         int size = json.getIntValue("size");
         String musicName = json.getString("musicName");
@@ -70,8 +70,8 @@ public class MusicScoreManageController {
         String authorCountryId = json.getString("authorCountryId");
         String authorNameId = json.getString("authorNameId");
         if(StringUtils.isEmptyBatch(page,size)){
-            throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
-                    APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
+                    HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
         }
         Page<MusicScoreForSel> musicScorePage = new Page<MusicScoreForSel>(page,size);
         MusicScoreQuery queryParams = new MusicScoreQuery();
@@ -112,82 +112,85 @@ public class MusicScoreManageController {
 
         Page<MusicScoreForSel> musics = musicScoreService.selectMusics(musicScorePage,queryParams);
         if(musics.getSize()>0){
-            return APIResponse.success(musics) ;
+            return HttpResult.ok(musics) ;
         }
-        return APIResponse.success(new Page<MusicScore>());
+        return  HttpResult.ok(new Page<MusicScore>());
 
     }
 
     /**
      * 上传乐谱并添加相关信息
+     *
      * @return
      */
     @PostMapping("/add")
-    APIResponse addMusic(@Valid MusicScore musicScore, @RequestParam("file") MultipartFile file) {
+    HttpResult addMusic(MusicScore musicScore, @RequestParam("file") MultipartFile file) {
         String path = null;
         String fileName = null;
         String uuid = StringUtils.getRandomCharAndNumr(20);
         try {
             if ( null!= file  ) {
-                JSONObject jsonObject = uploadUtils.updateToBaseFile(uploadPath,file, uuid);
+                JSONObject jsonObject = uploadUtils.updateToBaseFile(pathConstant.getMusicScorePath(), file, uuid);
                 path = jsonObject.getString("path");
                 fileName = jsonObject.getString("fileName");
             } else {
-                throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
-                        APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+                return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
+                        HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
             }
-            String[] names = fileName.split(",");
-            musicScore.setMusicName(names[0]);
+            musicScore.setMusicName(fileName);
             musicScore.setFilePath(path);
             musicScore.setCreateTime(DateUtils.getCurrentTime());
             musicScore.setUuid(uuid);
             musicScoreService.insertMusicScore(musicScore);
-            return APIResponse.success(APIServiceCode.SUCCESS.getCode());
+            return HttpResult.okWithoutData();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BusinessException(APIServiceCode.SYSTEM_INNER_ERROR.getCode(),
-                    APIServiceCode.SYSTEM_INNER_ERROR.getMessage());
+            return HttpResult.error(HttpStatus.SYSTEM_INNER_ERROR.getCode(),
+                    HttpStatus.SYSTEM_INNER_ERROR.getMessage());
         }
     }
 
     /**
      * 删除
+     *
      * @return
      */
     @GetMapping("/delete")
-    APIResponse deleteMusic(String id) {
+    HttpResult deleteMusic(String id) {
         if(StringUtils.isEmpty(id)){
-            throw new BusinessException(APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
-                    APIServiceCode.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
+                    HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
         }
         try {
             musicScoreMapper.delById(Integer.valueOf(id));
-            return APIResponse.success(APIServiceCode.SUCCESS.getCode());
+            return HttpResult.okWithoutData();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BusinessException(APIServiceCode.SYSTEM_INNER_ERROR.getCode(),
-                    APIServiceCode.SYSTEM_INNER_ERROR.getMessage());
+            return HttpResult.error(HttpStatus.SYSTEM_INNER_ERROR.getCode(),
+                    HttpStatus.SYSTEM_INNER_ERROR.getMessage());
         }
     }
 
     /**
      * 查询作家
+     *
      * @return
      */
     @GetMapping("/names")
-    APIResponse getNames(){
+    HttpResult getNames(){
 
-        return APIResponse.success(musicScoreMapper.getNames());
+        return HttpResult.ok(musicScoreMapper.getNames());
     }
 
     /**
      * 查询国家
+     *
      * @return
      */
     @GetMapping("/countrys")
-    APIResponse getCountrys(){
+    HttpResult getCountrys(){
 
-        return APIResponse.success(musicScoreMapper.getCountrys());
+        return HttpResult.ok(musicScoreMapper.getCountrys());
     }
 
 }

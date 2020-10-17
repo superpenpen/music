@@ -1,11 +1,10 @@
 package com.music.util.date;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author xiep
+ * @author zkk
  * @version V1.0
  * @Title: ${file_name}
  * @Package ${package_name}

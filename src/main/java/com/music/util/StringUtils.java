@@ -2,17 +2,10 @@ package com.music.util;
 
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * @author xiep
+ * @author zkk
  * @version V1.0
  * @Title: ${file_name}
  * @Package ${package_name}
@@ -20,7 +13,6 @@ import java.util.regex.Pattern;
  * @date ${date} ${time}
  */
 public final class StringUtils {
-
 
 
     static Logger logger = Logger.getLogger(StringUtils.class);
@@ -245,12 +237,11 @@ public final class StringUtils {
     }
 
 
-
     /**
      * 功能描述:随机生成0-99999的随机整数
      * @param: []
      * @return: int
-     * @auther: xiep
+     * @auther: chencheng
      * @date: 2018/8/30 10:15
      */
     public static  int produceNumber(){
@@ -279,150 +270,6 @@ public final class StringUtils {
         return str;
     }
 
-    /**
-     * 判断是否是排序方式
-     * @param sort
-     * @return
-     */
-    public static Boolean ifSortMode(String sort) {
-        if("asc".equals(sort) || "desc".equals(sort)){
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 判断字段是否在对象中
-     * @Param Object
-     * @param fieldname
-     * @return
-     */
-    public static Boolean ifObjectField(Class Object,String fieldname){
-        Field[] fields = Object.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            if(fields[i].getName().equals(fieldname))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static String camel4underline(String param){
-        Pattern p = Pattern.compile("[A-Z]");
-        if(param==null ||param.equals("")){
-            return "";
-        }
-        StringBuilder builder=new StringBuilder(param);
-        Matcher mc=p.matcher(param);
-        int i=0;
-        while(mc.find()){
-            builder.replace(mc.start()+i, mc.end()+i, "_"+mc.group().toLowerCase());
-            i++;
-        }
-        if('_' == builder.charAt(0)){
-            builder.deleteCharAt(0);
-        }
-        return builder.toString();
-    }
-
-    public static boolean isNullOrEmpty(Object obj) {
-        return null == obj || "".equals(obj);
-    }
-
-
-    /**
-     * String 转二进制
-     */
-    public  static  byte[] encodeByte(String feature){
-
-        ByteBuffer bb = ByteBuffer.allocate(256*4);
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        for ( String ss: feature.split(" ") ) {
-            if( null!=ss && !"".equals(ss)) {
-                bb.putFloat(Float.parseFloat(ss));
-            }
-        }
-
-        return bb.array();
-    }
-
-    /**
-     *  二进制转String
-     */
-    public  static  String encodeString(byte[] blob){
-        ByteBuffer bb = ByteBuffer.wrap(blob);
-        StringBuffer sb = new StringBuffer();
-        byte[] bytes = new byte[4];
-        for(int i=0;i<bb.array().length;i++){
-            bytes[0] = bb.get(i);
-            bytes[1] = bb.get(++i);
-            bytes[2] = bb.get(++i);
-            bytes[3] = bb.get(++i);
-            BigDecimal big = new BigDecimal(getFloat(bytes));
-            sb.append(" "+ big);
-        }
-        String a = sb.toString().substring(1);
-        return a;
-    }
-
-
-    /**
-     * 二进制转特征向量
-     * @param b
-     * @return
-     */
-    public static float getFloat(byte[] b) {
-        int accum = 0;
-        accum = accum|(b[0] & 0xff) << 0;
-        accum = accum|(b[1] & 0xff) << 8;
-        accum = accum|(b[2] & 0xff) << 16;
-        accum = accum|(b[3] & 0xff) << 24;
-        return Float.intBitsToFloat(accum);
-    }
-
-
-    /**
-     * 读取txt文件
-     * @param filePath
-     * @return
-     */
-    public static String reader(String filePath) {
-        try {
-            File file = new File(filePath);
-            if (file.isFile() && file.exists()) {
-                InputStreamReader read = new InputStreamReader(new FileInputStream(file), "UTF-8");
-                BufferedReader bufferedReader = new BufferedReader(read);
-                String lineTxt = bufferedReader.readLine();
-                while (lineTxt != null) {
-                    return lineTxt;
-                }
-            }
-        } catch (UnsupportedEncodingException | FileNotFoundException e) {
-            System.out.println("Cannot find the file specified!");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("Error reading file content!");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

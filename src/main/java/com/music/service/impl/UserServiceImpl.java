@@ -1,133 +1,161 @@
 package com.music.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.music.api.APIResponse;
-import com.music.api.APIServiceCode;
-import com.music.contants.IntContants;
-import com.music.contants.StringConstants;
-import com.music.entity.Role;
+import com.music.constant.IntConstants;
 import com.music.entity.User;
 import com.music.mapper.UserMapper;
+import com.music.security.JwtTokenUtils;
 import com.music.service.IUserService;
-import com.music.util.date.DateUtils;
-import com.music.util.redis.RedisUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.music.util.HttpResult;
+import com.music.util.HttpStatus;
+import com.music.util.PasswordUtils;
+import com.music.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-
 /**
+ * <p>
+ *  服务实现类
+ * </p>
  *
- * User 表数据服务层接口实现类
- *
+ * @author Xiep
+ * @since 2020-08-31
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
-    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
-    @Autowired
+    @Resource
     UserMapper userMapper;
 
-    @Autowired
-    RedisUtils redisUtils;
+
+
+
 
     @Override
-    public List<User> getUsersById(String page, String pageSize, String userId) {
-        int start = (Integer.valueOf(page) - 1) * (Integer.valueOf(pageSize));
-        int limit = Integer.valueOf(pageSize);
-        if (Integer.valueOf(userId) == IntContants.SUPER_ADMIN_USER_ID) {
-            return userMapper.getAllUsers(start, limit);
-        } else {
-            return userMapper.getUsersById(Integer.valueOf(userId), start, limit);
-        }
+    public User getUserByUserName(String userName){
+        return userMapper.getUserByUserName(userName);
     }
 
     @Override
-    public int countUsersById(String userId) {
-        if (Integer.valueOf(userId) == IntContants.SUPER_ADMIN_USER_ID) {
-            return userMapper.countAllUsers();
-        } else {
-            return userMapper.countUsersById(Integer.valueOf(userId));
+    public HttpResult getUsersPageQuery(HttpServletRequest request,
+                                        String userName, String nickName, Integer roleId, Integer page, Integer size){
+        if (StringUtils.isEmptyBatch(page, size)){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(),
+                    HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
         }
+        String requestUserName = JwtTokenUtils.getUserNameFromToken(request);
+        User u = getUserByUserName(requestUserName);
+        Page<User> userPage =new Page<>(page, size);
+        String join = null;
+        if (u.getRoleId() == IntConstants.ROLE_SUPER_ADMIN){
+            // 超级管理员
+        }else if (u.getRoleId() == IntConstants.ROLE_ADMIN){
+            //普通管理员
+            join = " role_id != 0";
+        }else if (u.getRoleId() == IntConstants.ROLE_NORMAL_USER){
+            // 普通用户
+            join = " role_id = 2";
+        }
+        Page<User> pageResult = userPage.setRecords(
+                userMapper.selectUserPage(userPage, userName, nickName, roleId, join));
+        return HttpResult.ok(pageResult);
+
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public APIResponse insertUser(User user) {
-        // 根据用户名username，判断用户是否已存在
-        User u = userMapper.getUserByUserName(user.getUsername());
+    public HttpResult userCreate(User user){
+        if (StringUtils.isEmptyBatch(user.getUserName(), user.getNickName())|| StringUtils.isEmpty(user.getRoleId())){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(), HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        User u = getUserByUserName(user.getUserName());
         if (u != null) {
-            return APIResponse.error(APIServiceCode.PRIVILEGE_USER_HAS_EXISTED.getCode(),
-                    APIServiceCode.PRIVILEGE_USER_HAS_EXISTED.getMessage());
-        }
-        // 根据roleId获取roleName
-        String roleName = userMapper.getRoleNameById(user.getRoleId());
-        // 设置用户角色名称role_name
-        user.setRoleName(roleName);
-        // 设置用户创建人Id, create_user_id
-        Session session = SecurityUtils.getSubject().getSession();
-        JSONObject userInfo = (JSONObject) session.getAttribute(StringConstants.SESSION_USER_INFO);
-        user.setCreateUserId(userInfo.getInteger("userId"));
-        // 设置用户状态status, 默认为1(启用)
-        user.setStatus(1);
-        // 设置用户创建时间create_time
-        user.setCreateTime(DateUtils.getCurrentTime());
-        insert(user);
-        return APIResponse.success(user);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public APIResponse updateUser(User user) {
-        user.setUsername(user.getUsername());
-        user.setPassword(user.getPassword());
-        user.setDescInfo(user.getDescInfo());
-        user.setRoleId(user.getRoleId());
-        // 根据roleId获取roleName
-        String roleName = userMapper.getRoleNameById(user.getRoleId());
-        // 设置用户角色名称role_name
-        user.setRoleName(roleName);
-        user.setStatus(user.getStatus());
-        user.setEmail(user.getEmail());
-        user.setPhone(user.getPhone());
-        user.setAddress(user.getAddress());
-        // 设置用户修改时间create_time
-        user.setUpdateTime(DateUtils.getCurrentTime());
-        updateById(user);
-        return APIResponse.success(user);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(int id) {
-        userMapper.deleteUser(id);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateUserStatus(int userId, int status) {
-        userMapper.updateUserStatus(userId, status);
-    }
-
-    @Override
-    public List<Role> getAllRoles() {
-        Session session = SecurityUtils.getSubject().getSession();
-        JSONObject userInfo = (JSONObject) session.getAttribute(StringConstants.SESSION_USER_INFO);
-        int userId = userInfo.getInteger("userId");
-        if (userId == IntContants.SUPER_ADMIN_USER_ID) {
-            return userMapper.getAllRoles();
+            return HttpResult.error(HttpStatus.USER_NAME_EXISTS.getCode(), HttpStatus.USER_NAME_EXISTS.getMessage());
         } else {
-            return userMapper.getRolesById(userId);
+            // 新建用户默认密码123456
+            user.setPassword("123456");
+            String salt = PasswordUtils.getSalt();
+            String password = PasswordUtils.encode(user.getPassword(), salt);
+            user.setSalt(salt);
+            user.setPassword(password);
+            userMapper.insert(user);
+            return HttpResult.okWithoutData();
         }
     }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public HttpResult userDelete(Integer userId){
+        if (StringUtils.isEmpty(userId)){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(), HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        userMapper.deleteById(userId);
+        return HttpResult.okWithoutData();
+    }
+
+
+    @Override
+    public HttpResult userPwdReset(Integer id){
+        if (StringUtils.isEmpty(id)){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(), HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        User user = userMapper.selectById(id);
+        String password = PasswordUtils.encode("123456", user.getSalt());
+        userMapper.pwdReset(id, password);
+        return HttpResult.okWithoutData();
+    }
+
+    @Override
+    public HttpResult userPwdEdit(Integer id, String password, String passwordNew){
+        if (StringUtils.isEmpty(id)|| StringUtils.isEmptyBatch(password, passwordNew)){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(), HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        User user = userMapper.selectById(id);
+        String passwordRequest = PasswordUtils.encode(password, user.getSalt());
+        if (user.getPassword().equals(passwordRequest) ){
+                passwordNew = PasswordUtils.encode(passwordNew, user.getSalt());
+        }else{
+            return HttpResult.error(HttpStatus.SYSTEM_USER_PASSWORD_ERROR.getCode(),
+                    HttpStatus.SYSTEM_USER_PASSWORD_ERROR.getMessage());
+        }
+        userMapper.pwdReset(id, passwordNew);
+        return HttpResult.okWithoutData();
+    }
+
+    @Override
+    public HttpResult userNickNameEdit(Integer id, String nickName){
+        if (StringUtils.isEmpty(id)|| StringUtils.isEmpty(nickName)){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(), HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        userMapper.updateNickName(id, nickName);
+        return HttpResult.okWithoutData();
+    }
+
+    @Override
+    public HttpResult userRoleEdit(Integer id, Integer roleId){
+        if (StringUtils.isEmptyBatch(id, roleId)){
+            return HttpResult.error(HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getCode(), HttpStatus.SYSTEM_PARAM_NOT_COMPLETE.getMessage());
+        }
+        userMapper.updateRoleId(id, roleId);
+        return HttpResult.okWithoutData();
+    }
+
+
+
+
+
 
 }
+
+
+
+
+
+
+

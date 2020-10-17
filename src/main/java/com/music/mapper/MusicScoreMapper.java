@@ -17,7 +17,7 @@ import java.util.List;
  **/
 @Repository
 @Mapper
-public interface MusicScoreMapper extends SuperMapper<MusicScore> {
+public interface MusicScoreMapper extends com.baomidou.mybatisplus.core.mapper.BaseMapper<MusicScore> {
 
 
     List<MusicScoreForSel> selectMusics(Page<MusicScoreForSel> page, @Param("queryParams")MusicScoreQuery queryParams);
