@@ -1,5 +1,6 @@
 package com.music.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.music.entity.*;
 import org.apache.ibatis.annotations.Delete;
@@ -15,9 +16,7 @@ import java.util.List;
  * @Author: xiep
  * @Date: 2019/07/10 13:26
  **/
-@Repository
-@Mapper
-public interface MusicScoreMapper extends com.baomidou.mybatisplus.core.mapper.BaseMapper<MusicScore> {
+public interface MusicScoreMapper extends BaseMapper<MusicScore> {
 
 
     List<MusicScoreForSel> selectMusics(Page<MusicScoreForSel> page, @Param("queryParams")MusicScoreQuery queryParams);
